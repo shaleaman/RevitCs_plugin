@@ -16,6 +16,8 @@ using System.IO;
 [RegenerationAttribute(RegenerationOption.Manual)]
 public class Backup_File : IExternalCommand
 {
+     
+
     public Result Execute(
         ExternalCommandData commandData,
         ref string message,
