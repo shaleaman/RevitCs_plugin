@@ -16,7 +16,24 @@ using System.IO;
 [RegenerationAttribute(RegenerationOption.Manual)]
 public class Backup_File : IExternalCommand
 {
-     
+//    public void ReadAllFiles(string directory)
+//    {
+//        var fileNames = Directory.GetFiles(directory);
+//        List<string> datedNames = new List<string>;
+
+//    }
+//    public string ReadDate(string filename)
+//        {
+//        if (filename.Length > 8)
+//            {
+//                var dateTest = filename.Substring(0,8);
+//            }
+//        if (int.TryParse(dateTest, out fileDate))
+//            {
+//               return DateTime.ParseExact(dateStub, "yyyyMMdd", null);
+//            }
+//        else { return DateTime.Today;}
+//    }       
 
     public Result Execute(
         ExternalCommandData commandData,
@@ -40,7 +57,7 @@ public class Backup_File : IExternalCommand
         if (theDialogRevit.ShowDialog() == DialogResult.OK)
         {
             DateTime todaysDate = DateTime.Today;
-            string dateStamp = string.Format("{0}", todaysDate.ToString("yyyMMdd"));
+            string dateStamp = string.Format("{0}", todaysDate.ToString("yyyyMMdd"));
             string mpath = "";
             string mpathOnlyFilename = "";
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
@@ -48,15 +65,18 @@ public class Backup_File : IExternalCommand
             
 
             folderBrowserDialog1.Description = "Select Folder Where Revit Projects to be Saved in Local";
-            folderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer;
+            //folderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer;
+            folderBrowserDialog1.SelectedPath = currentFolder;
 
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 mpath = folderBrowserDialog1.SelectedPath;
                 foreach (String projectPath in theDialogRevit.FileNames)
                 {
+                    // convert input string to directory info. 
                     FileInfo filePath = new FileInfo(projectPath);
                     ModelPath mp = ModelPathUtils.ConvertUserVisiblePathToModelPath(filePath.FullName);
+
                     OpenOptions opt = new OpenOptions();
                     opt.DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets;
                     mpathOnlyFilename = string.Format("{0}_{1}", dateStamp, filePath.Name);
@@ -72,6 +92,9 @@ public class Backup_File : IExternalCommand
                  
                 }
             }
+
+            // Scan backup folder and retrieve date prefixes
+            //List<string> filesToDelete =  ReadAllFiles(mpath);
         }
         return Result.Succeeded;
     }
